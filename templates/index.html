@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Recommendation System</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Car Rental Recommendation System</h1>
+            <p>Find the perfect car for your needs</p>
+        </header>
+
+        <div class="preferences-form">
+            <h2>Select Your Preferences</h2>
+            <div class="form-group">
+                <label for="user-id">User ID:</label>
+                <select id="user-id" required>
+                    <option value="">Select User ID</option>
+                    {% for user_id in user_ids %}
+                    <option value="{{ user_id }}">{{ user_id }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="car_models">Car models :</label>
+                <select id="car_models">
+                    <option value="">Any</option>
+                    {% for car_models in car_models %}
+                    <option value="{{ car_models }}">{{ car_models }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="car_makes">Car_make:</label>
+                <select id="car_makes">
+                    <option value="">Any</option>
+                    {% for car_makes in car_makes %}
+                    <option value="{{ car_makes }}">{{ car_makes }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="car-type">Car Type:</label>
+                <select id="car-type">
+                    <option value="">Any</option>
+                    {% for car_type in car_types %}
+                    <option value="{{ car_type }}">{{ car_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fuel-type">Fuel Type:</label>
+                <select id="fuel-type">
+                    <option value="">Any</option>
+                    {% for fuel_type in fuel_types %}
+                    <option value="{{ fuel_type }}">{{ fuel_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="transmission-type">Transmission Type:</label>
+                <select id="transmission-type">
+                    <option value="">Any</option>
+                    {% for transmission_type in transmission_types %}
+                    <option value="{{ transmission_type }}">{{ transmission_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Add the Recommendation Type dropdown here -->
+            <div class="form-group">
+                <label for="recommendation-type">Recommendation Type:</label>
+                <select id="recommendation-type">
+                    <option value="hybrid">Hybrid Recommendations</option>
+                    <option value="content">Based on Preferences</option>
+                    <option value="collaborative">Based on Similar Users</option>
+                </select>
+            </div>
+            <button id="recommend-btn">Get Recommendations</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loader"><div class="spinner"></div>
+        </div>
+        <p>Finding the best cars for you...</p>
+    </div>
+
+    <div class="recommendations-container">
+        <div class="tabs">
+            <button class="tab-button active" data-tab="hybrid">Hybrid Recommendations</button>
+            <button class="tab-button" data-tab="content">Based on Preferences</button>
+            <button class="tab-button" data-tab="collaborative">Based on Similar Users</button>
+        </div>
+
+        <div class="tab-content active" id="hybrid-recommendations">
+            <h2>Hybrid Recommendations</h2>
+            <p class="description">Recommendations based on both your preferences and similar users' choices</p>
+            <div class="cars-grid" id="hybrid-cars"></div>
+        </div>
+
+        <div class="tab-content" id="content-recommendations">
+            <h2>Recommendations Based on Your Preferences</h2>
+            <p class="description">Cars that match your selected preferences</p>
+            <div class="cars-grid" id="content-cars"></div>
+        </div>
+
+        <div class="tab-content" id="collaborative-recommendations">
+            <h2>Recommendations Based on Similar Users</h2>
+            <p class="description">Cars that users similar to you have highly rated</p>
+            <div class="cars-grid" id="collaborative-cars"></div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/script.js"></script>
+</body>
+</html>
