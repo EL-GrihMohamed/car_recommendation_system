@@ -5,7 +5,6 @@ document.getElementById('recommend-btn').addEventListener('click', function () {
     const carType = document.getElementById('car-type').value;
     const fuelType = document.getElementById('fuel-type').value;
     const transmissionType = document.getElementById('transmission-type').value;
-    const recommendationType = document.getElementById('recommendation-type').value; // Get selected recommendation type
 
     const preferences = {
         user_id: userId,
@@ -25,21 +24,19 @@ document.getElementById('recommend-btn').addEventListener('click', function () {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...preferences, recommendation_type: recommendationType }), // Include recommendation type
+        body: JSON.stringify(preferences), // No need for recommendation_type anymore
     })
     .then(response => response.json())
     .then(data => {
         // Hide loading spinner
         document.getElementById('loading').style.display = 'none';
 
-        // Display the recommendations based on the selected type
-        if (recommendationType === 'hybrid') {
-            displayCars(data.hybrid, 'hybrid-cars');
-        } else if (recommendationType === 'content') {
-            displayCars(data.content_based, 'content-cars');
-        } else if (recommendationType === 'collaborative') {
-            displayCars(data.collaborative_filtering, 'collaborative-cars');
-        }
+        // Display all recommendations
+        displayCars(data.hybrid, 'hybrid-cars');
+        displayCars(data.content_based, 'content-cars');
+        displayCars(data.collaborative_filtering, 'collaborative-cars');
+        
+        // Keep the current active tab
     })
     .catch(error => {
         console.error('Error:', error);
@@ -70,3 +67,22 @@ function displayCars(cars, containerId) {
         container.appendChild(carCard);
     });
 }
+
+// Add tab switching functionality
+document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Remove active class from all tabs and tab contents
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        // Add active class to the clicked tab and its content
+        this.classList.add('active');
+        document.getElementById(`${tabId}-recommendations`).classList.add('active');
+    });
+});

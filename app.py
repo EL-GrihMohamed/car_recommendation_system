@@ -51,13 +51,13 @@ def home():
     transmission_types = sorted(cars_df['transmission_type'].unique())
     user_ids = sorted(users_df['user_id'].unique())
     car_models = sorted(cars_df['car_models'].unique())
-    car_makes = sorted(cars_df['car_make'].unique())  # <-- Corrected column name
+    car_makes = sorted(cars_df['car_make'].unique())
     return render_template('index.html', 
                            car_types=car_types,
                            fuel_types=fuel_types,
                            transmission_types=transmission_types,
-                           user_ids=user_ids,  # <-- Comma added here
-                           car_models=car_models,  # <-- Comma added here
+                           user_ids=user_ids,
+                           car_models=car_models,
                            car_makes=car_makes)
 
 # Function to get content-based recommendations
@@ -65,73 +65,85 @@ def get_content_based_recommendations(preferences, top_n=5):
     # Filter cars based on user preferences
     filtered_cars = cars_df.copy()
     
-    if preferences.get('car_models'):
+    # Only apply filters for non-empty preferences
+    if preferences.get('car_models') and preferences['car_models'] != "":
         filtered_cars = filtered_cars[filtered_cars['car_models'] == preferences['car_models']]
     
-    if preferences.get('car_makes'):  # <-- Corrected column name
-        filtered_cars = filtered_cars[filtered_cars['car_makes'] == preferences['car_makes']]
+    if preferences.get('car_makes') and preferences['car_makes'] != "":
+        filtered_cars = filtered_cars[filtered_cars['car_make'] == preferences['car_makes']]  # Note: column is 'car_make' not 'car_makes'
 
-    if preferences.get('car_type'):
+    if preferences.get('car_type') and preferences['car_type'] != "":
         filtered_cars = filtered_cars[filtered_cars['car_type'] == preferences['car_type']]
     
-    if preferences.get('fuel_type'):
+    if preferences.get('fuel_type') and preferences['fuel_type'] != "":
         filtered_cars = filtered_cars[filtered_cars['fuel_type'] == preferences['fuel_type']]
         
-    if preferences.get('transmission_type'):
+    if preferences.get('transmission_type') and preferences['transmission_type'] != "":
         filtered_cars = filtered_cars[filtered_cars['transmission_type'] == preferences['transmission_type']]
     
-    # If no cars match the criteria, return empty list
+    # If no cars match the criteria or no filters were applied, return a sample of cars
     if filtered_cars.empty:
-        return []
+        return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
     
+    # Return the filtered cars
     return filtered_cars.head(top_n).to_dict('records')
 
 # Function to get collaborative filtering recommendations
 def get_collaborative_recommendations(user_id, top_n=5):
-    # Get all cars not rated by the user
-    all_car_ids = cars_df['car_id'].unique()
-    user_ratings = ratings_df[ratings_df['user_id'] == user_id]['car_id'].unique()
-    unrated_cars = np.setdiff1d(all_car_ids, user_ratings)
-    
-    # Get predictions for user
-    predictions = []
-    for car_id in unrated_cars:
-        predictions.append((car_id, knn_user.predict(user_id, car_id).est))
-    
-    # Sort by estimated rating
-    predictions.sort(key=lambda x: x[1], reverse=True)
-    
-    # Get top N car IDs
-    top_car_ids = [pred[0] for pred in predictions[:top_n]]
-    
-    # Return car details
-    return cars_df[cars_df['car_id'].isin(top_car_ids)].to_dict('records')
+    try:
+        user_id = int(user_id)
+        # Get all cars not rated by the user
+        all_car_ids = cars_df['car_id'].unique()
+        user_ratings = ratings_df[ratings_df['user_id'] == user_id]['car_id'].unique()
+        unrated_cars = np.setdiff1d(all_car_ids, user_ratings)
+        
+        # Get predictions for user
+        predictions = []
+        for car_id in unrated_cars:
+            predictions.append((car_id, knn_user.predict(user_id, car_id).est))
+        
+        # Sort by estimated rating
+        predictions.sort(key=lambda x: x[1], reverse=True)
+        
+        # Get top N car IDs
+        top_car_ids = [pred[0] for pred in predictions[:top_n]]
+        
+        # Return car details
+        return cars_df[cars_df['car_id'].isin(top_car_ids)].to_dict('records')
+    except:
+        # Return random cars if there's an error
+        return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
 
 # Function to get item-based recommendations
 def get_item_based_recommendations(user_id, top_n=5):
-    # Get cars rated by the user
-    user_rated_cars = ratings_df[ratings_df['user_id'] == user_id]['car_id'].unique()
-    
-    if len(user_rated_cars) == 0:
-        return []
-    
-    # Get all cars not rated by the user
-    all_car_ids = cars_df['car_id'].unique()
-    unrated_cars = np.setdiff1d(all_car_ids, user_rated_cars)
-    
-    # Get predictions for user based on item similarity
-    predictions = []
-    for car_id in unrated_cars:
-        predictions.append((car_id, knn_item.predict(user_id, car_id).est))
-    
-    # Sort by estimated rating
-    predictions.sort(key=lambda x: x[1], reverse=True)
-    
-    # Get top N car IDs
-    top_car_ids = [pred[0] for pred in predictions[:top_n]]
-    
-    # Return car details
-    return cars_df[cars_df['car_id'].isin(top_car_ids)].to_dict('records')
+    try:
+        user_id = int(user_id)
+        # Get cars rated by the user
+        user_rated_cars = ratings_df[ratings_df['user_id'] == user_id]['car_id'].unique()
+        
+        if len(user_rated_cars) == 0:
+            return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
+        
+        # Get all cars not rated by the user
+        all_car_ids = cars_df['car_id'].unique()
+        unrated_cars = np.setdiff1d(all_car_ids, user_rated_cars)
+        
+        # Get predictions for user based on item similarity
+        predictions = []
+        for car_id in unrated_cars:
+            predictions.append((car_id, knn_item.predict(user_id, car_id).est))
+        
+        # Sort by estimated rating
+        predictions.sort(key=lambda x: x[1], reverse=True)
+        
+        # Get top N car IDs
+        top_car_ids = [pred[0] for pred in predictions[:top_n]]
+        
+        # Return car details
+        return cars_df[cars_df['car_id'].isin(top_car_ids)].to_dict('records')
+    except:
+        # Return random cars if there's an error
+        return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
 
 # Function to get hybrid recommendations
 def get_hybrid_recommendations(user_id, preferences, top_n=5):
@@ -168,19 +180,27 @@ def get_hybrid_recommendations(user_id, preferences, top_n=5):
     sorted_recs = sorted(all_recs.values(), key=lambda x: x['score'], reverse=True)
     
     # Return top N recommendations
-    return [rec['car'] for rec in sorted_recs[:top_n]]
+    recommendations = [rec['car'] for rec in sorted_recs[:top_n]]
+    
+    # If no recommendations were found, return a sample of cars
+    if not recommendations:
+        return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
+    
+    return recommendations
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
     data = request.json
-    user_id = int(data['user_id'])
+    user_id = data['user_id']
     preferences = {
+        'car_models': data.get('car_models'),
+        'car_makes': data.get('car_makes'),
         'car_type': data.get('car_type'),
         'fuel_type': data.get('fuel_type'),
         'transmission_type': data.get('transmission_type')
     }
     
-    # Get different types of recommendations
+    # Get all three types of recommendations regardless of selection
     content_recs = get_content_based_recommendations(preferences)
     collab_recs = get_collaborative_recommendations(user_id)
     hybrid_recs = get_hybrid_recommendations(user_id, preferences)
