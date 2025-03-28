@@ -1,88 +1,115 @@
-document.getElementById('recommend-btn').addEventListener('click', function () {
-    const userId = document.getElementById('user-id').value;
-    const carModels = document.getElementById('car_models').value;
-    const carMakes = document.getElementById('car_makes').value;
-    const carType = document.getElementById('car-type').value;
-    const fuelType = document.getElementById('fuel-type').value;
-    const transmissionType = document.getElementById('transmission-type').value;
+document.addEventListener('DOMContentLoaded', () => {
+    const recommendBtn = document.getElementById('recommend-btn');
+    const loadingIndicator = document.getElementById('loading');
+    const tabButtons = document.querySelectorAll('.tab-button');
 
-    const preferences = {
-        user_id: userId,
-        car_models: carModels,
-        car_makes: carMakes,
-        car_type: carType,
-        fuel_type: fuelType,
-        transmission_type: transmissionType
-    };
+    // Tab switching functionality
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and tab contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-    // Show loading spinner
-    document.getElementById('loading').style.display = 'block';
-
-    // Send request to the backend
-    fetch('/recommend', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(preferences), // No need for recommendation_type anymore
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Hide loading spinner
-        document.getElementById('loading').style.display = 'none';
-
-        // Display all recommendations
-        displayCars(data.hybrid, 'hybrid-cars');
-        displayCars(data.content_based, 'content-cars');
-        displayCars(data.collaborative_filtering, 'collaborative-cars');
-        
-        // Keep the current active tab
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('loading').style.display = 'none';
+            // Add active class to clicked button and corresponding tab content
+            button.classList.add('active');
+            const tabId = button.getAttribute('data-tab');
+            document.getElementById(`${tabId}-recommendations`).classList.add('active');
+        });
     });
-});
 
-function displayCars(cars, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = ''; // Clear previous results
+    // Recommendation functionality
+    if (recommendBtn) {
+        recommendBtn.addEventListener('click', () => {
+            // Collect preference values
+            const preferences = {
+                userId: document.getElementById('user-id').value,
+                carModels: document.getElementById('car_models').value,
+                carMakes: document.getElementById('car_makes').value,
+                carType: document.getElementById('car-type').value,
+                fuelType: document.getElementById('fuel-type').value,
+                transmissionType: document.getElementById('transmission-type').value
+            };
 
-    if (cars.length === 0) {
-        container.innerHTML = '<p>No recommendations found.</p>';
-        return;
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+
+            // Simulate API call (replace with actual fetch to your backend)
+            setTimeout(() => {
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
+
+                // Example recommendation data (replace with actual data from backend)
+                const recommendations = {
+                    hybrid: [
+                        { 
+                            carMake: 'Toyota', 
+                            carModel: 'Prius', 
+                            carType: 'Hybrid', 
+                            fuelType: 'Hybrid', 
+                            transmissionType: 'Automatic',
+                            pricePerDay: 75 
+                        },
+                        { 
+                            carMake: 'Honda', 
+                            carModel: 'Insight', 
+                            carType: 'Hybrid', 
+                            fuelType: 'Hybrid', 
+                            transmissionType: 'Automatic',
+                            pricePerDay: 70 
+                        }
+                    ],
+                    contentBased: [
+                        { 
+                            carMake: 'Ford', 
+                            carModel: 'Mustang', 
+                            carType: 'Sports', 
+                            fuelType: 'Petrol', 
+                            transmissionType: 'Manual',
+                            pricePerDay: 100 
+                        }
+                    ],
+                    collaborativeBased: [
+                        { 
+                            carMake: 'BMW', 
+                            carModel: '3 Series', 
+                            carType: 'Sedan', 
+                            fuelType: 'Diesel', 
+                            transmissionType: 'Automatic',
+                            pricePerDay: 90 
+                        }
+                    ]
+                };
+
+                // Display recommendations
+                displayRecommendations(recommendations);
+            }, 1500);
+        });
     }
 
-    cars.forEach(car => {
-        const carCard = document.createElement('div');
-        carCard.className = 'car-card';
-        carCard.innerHTML = `
-            <h3>${car.car_make} ${car.car_models}</h3>
-            <p>Type: ${car.car_type}</p>
-            <p>Fuel: ${car.fuel_type}</p>
-            <p>Transmission: ${car.transmission_type}</p>
-            <p>Price per day: $${car.price_per_day}</p>
-            <p>Year: ${car.year}</p>
-        `;
-        container.appendChild(carCard);
-    });
-}
+    function displayRecommendations(recommendations) {
+        // Display Hybrid Recommendations
+        const hybridContainer = document.getElementById('hybrid-cars');
+        hybridContainer.innerHTML = recommendations.hybrid.map(car => createCarCard(car)).join('');
 
-// Add tab switching functionality
-document.querySelectorAll('.tab-button').forEach(button => {
-    button.addEventListener('click', function() {
-        const tabId = this.getAttribute('data-tab');
-        
-        // Remove active class from all tabs and tab contents
-        document.querySelectorAll('.tab-button').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-        
-        // Add active class to the clicked tab and its content
-        this.classList.add('active');
-        document.getElementById(`${tabId}-recommendations`).classList.add('active');
-    });
+        // Display Content-Based Recommendations
+        const contentContainer = document.getElementById('content-cars');
+        contentContainer.innerHTML = recommendations.contentBased.map(car => createCarCard(car)).join('');
+
+        // Display Collaborative Recommendations
+        const collaborativeContainer = document.getElementById('collaborative-cars');
+        collaborativeContainer.innerHTML = recommendations.collaborativeBased.map(car => createCarCard(car)).join('');
+    }
+
+    function createCarCard(car) {
+        return `
+            <div class="car-card">
+                <h3>${car.carMake} ${car.carModel}</h3>
+                <p>Type: ${car.carType}</p>
+                <p>Fuel: ${car.fuelType}</p>
+                <p>Transmission: ${car.transmissionType}</p>
+                <p>Price per day: $${car.pricePerDay}</p>
+                <button class="btn btn__primary">Rent Now</button>
+            </div>
+        `;
+    }
 });
