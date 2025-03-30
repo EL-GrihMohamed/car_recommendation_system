@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles.css">
 </head>
+
 <body>
     <nav>
         <div class="nav__header">
@@ -40,42 +42,54 @@
                     <label for="user-id">User ID:</label>
                     <select id="user-id" required>
                         <option value="">Select User ID</option>
-                        <!-- Dynamically populate user IDs -->
+                        {% for user_id in user_ids %}
+                        <option value="{{ user_id }}">{{ user_id }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="car_models">Car Model:</label>
                     <select id="car_models">
                         <option value="">Any</option>
-                        <!-- Dynamically populate car models -->
+                        {% for car_models in car_models %}
+                        <option value="{{ car_models }}">{{ car_models }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="car_makes">Car Make:</label>
                     <select id="car_makes">
                         <option value="">Any</option>
-                        <!-- Dynamically populate car makes -->
+                        {% for car_makes in car_makes %}
+                        <option value="{{ car_makes }}">{{ car_makes }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="car-type">Car Type:</label>
                     <select id="car-type">
                         <option value="">Any</option>
-                        <!-- Dynamically populate car types -->
+                        {% for car_type in car_types %}
+                        <option value="{{ car_type }}">{{ car_type }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="fuel-type">Fuel Type:</label>
                     <select id="fuel-type">
                         <option value="">Any</option>
-                        <!-- Dynamically populate fuel types -->
+                        {% for fuel_type in fuel_types %}
+                        <option value="{{ fuel_type }}">{{ fuel_type }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="transmission-type">Transmission Type:</label>
                     <select id="transmission-type">
                         <option value="">Any</option>
-                        <!-- Dynamically populate transmission types -->
+                        {% for transmission_type in transmission_types %}
+                        <option value="{{ transmission_type }}">{{ transmission_type }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <button id="recommend-btn" class="btn btn__primary">Get Recommendations</button>
@@ -84,7 +98,9 @@
 
         <div class="section__container recommendations-container">
             <div class="loading" id="loading">
-                <div class="loader"><div class="spinner"></div></div>
+                <div class="loader">
+                    <div class="spinner"></div>
+                </div>
                 <p>Finding the best cars for you...</p>
             </div>
 
@@ -160,6 +176,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="../static/script.js"></script>
 </body>
+
 </html>

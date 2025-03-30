@@ -69,8 +69,8 @@ def get_content_based_recommendations(preferences, top_n=5):
     if preferences.get('car_models') and preferences['car_models'] != "":
         filtered_cars = filtered_cars[filtered_cars['car_models'] == preferences['car_models']]
     
-    if preferences.get('car_makes') and preferences['car_makes'] != "":
-        filtered_cars = filtered_cars[filtered_cars['car_make'] == preferences['car_makes']]  # Note: column is 'car_make' not 'car_makes'
+    if preferences.get('car_make') and preferences['car_make'] != "":
+        filtered_cars = filtered_cars[filtered_cars['car_make'] == preferences['car_make']]  # Note: column is 'car_make' not 'car_makes'
 
     if preferences.get('car_type') and preferences['car_type'] != "":
         filtered_cars = filtered_cars[filtered_cars['car_type'] == preferences['car_type']]
