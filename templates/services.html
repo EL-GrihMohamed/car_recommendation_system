@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RentalX - Car Rental Service</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="../static/styles.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <div class="nav__logo">
+        <a href="#">RENTIX</a>
+      </div>
+      <ul class="nav__links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/rent">Rent</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+      <div class="nav__btn">
+        <button class="btn">Get Started</button>
+      </div>
+    </nav>
+    <div class="video-background">
+     <video class="background-video" autoplay muted loop>
+        <source src="{{ url_for('static', filename='images/video1.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </header>
+  <main>
+    <section class="section__container services__container" id="services">
+      <p class="section__subheader">OUR SERVICES</p>
+      <h2 class="section__header">What we offer</h2>
+      <div class="services__grid">
+        <div class="services__card">
+          <span><i class="ri-car-fill"></i></span>
+          <h4>Wide Vehicle Selection</h4>
+          <p>Choose from a diverse fleet of vehicles to match your specific needs and preferences.</p>
+        </div>
+        <div class="services__card">
+          <span><i class="ri-customer-service-fill"></i></span>
+          <h4>24/7 Support</h4>
+          <p>Our dedicated team is always available to assist you with any questions or concerns.</p>
+        </div>
+        <div class="services__card">
+          <span><i class="ri-shield-check-fill"></i></span>
+          <h4>Comprehensive Insurance</h4>
+          <p>Enjoy peace of mind with our comprehensive insurance coverage for all rentals.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section__container location__container" id="rent">
+      <div class="location__image">
+      <img src="{{ url_for('static', filename='images/location.png') }}" alt="location" />
+      </div>
+      <div class="location__content">
+        <h2 class="section__headerr">FIND CAR IN YOUR LOCATIONS</h2>
+        <p>
+          Discover the perfect vehicle tailored to your needs, wherever you are.
+          Our 'Find Car in Your Locations' feature allows you to effortlessly
+          search and select from our premium fleet available near you. Whether
+          you're looking for a luxury sedan, a spacious SUV, or a sporty
+          convertible, our easy-to-use tool ensures you find the ideal car for
+          your journey. Simply enter your location, and let us connect you with
+          top-tier vehicles ready for rental.
+        </p>
+        <div class="location__btn">
+          <button class="btn">Find a Location</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="section__container footer__container">
+      <div class="footer__col">
+        <h4>Our Products</h4>
+        <ul class="footer__links">
+          <li><a href="#">Cars</a></li>
+          <li><a href="#">Packages</a></li>
+          <li><a href="#">Features</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>About RentalX</h4>
+        <ul class="footer__links">
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Investors</a></li>
+          <li><a href="#">Press Centers</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Resources</h4>
+        <ul class="footer__links">
+          <li><a href="#">Help Centers</a></li>
+          <li><a href="#">Guides</a></li>
+          <li><a href="#">Partner Network</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Contact</h4>
+        <ul class="footer__links">
+          <li><a href="#">Support</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Feedback</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="section__container footer__bar">
+      <h4>RentalX</h4>
+      <p>Copyright © 2024 RentalX. All rights reserved.</p>
+      <ul class="footer__socials">
+        <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+        <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+        <li><a href="#"><i class="ri-instagram-fill"></i></a></li>
+      </ul>
+    </div>
+  </footer>
+  <script src="https://unpkg.com/scrollreveal"></script>
+</body>
+  

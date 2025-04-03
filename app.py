@@ -42,11 +42,17 @@ tfidf = TfidfVectorizer(stop_words='english')
 tfidf_matrix = tfidf.fit_transform(cars_df['features'])
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
-# Route for home page
+# Route for home page (index.html)
 @app.route('/')
 @app.route('/index')
 @app.route('/index.html')
 def index():
+    return render_template('index.html')
+
+# Route for recommendation page (the page that was previously 'index.html' in your code)
+@app.route('/rent')
+@app.route('/rent.html')
+def rent_page():
     # Get unique values for dropdowns
     car_types = sorted(cars_df['car_type'].unique())
     fuel_types = sorted(cars_df['fuel_type'].unique())
@@ -54,7 +60,7 @@ def index():
     user_ids = sorted(users_df['user_id'].unique())
     car_models = sorted(cars_df['car_models'].unique())
     car_makes = sorted(cars_df['car_make'].unique())
-    return render_template('index.html', 
+    return render_template('rent.html', 
                            car_types=car_types,
                            fuel_types=fuel_types,
                            transmission_types=transmission_types,
@@ -62,11 +68,17 @@ def index():
                            car_models=car_models,
                            car_makes=car_makes)
 
-# Route for home page
-@app.route('/home')
-@app.route('/home.html')
-def home_page():
-    return render_template('home.html')
+# New route for services page
+@app.route('/services')
+@app.route('/services.html')
+def services_page():
+    return render_template('services.html')
+
+# New route for contact page
+@app.route('/contact')
+@app.route('/contact.html')
+def contact_page():
+    return render_template('contact.html')
 
 # Function to get content-based recommendations
 def get_content_based_recommendations(preferences, top_n=5):
