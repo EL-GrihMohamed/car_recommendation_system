@@ -24,7 +24,7 @@ sim_options = {
     'name': 'cosine',
     'user_based': True  # User-based collaborative filtering
 }
-knn_user = KNNBasic(sim_options=sim_options, verbose=False)  # <-- Suppress logs
+knn_user = KNNBasic(sim_options=sim_options, verbose=False)  # Suppress logs
 knn_user.fit(trainset)
 
 # Also train item-based model
@@ -32,7 +32,7 @@ sim_options_item = {
     'name': 'cosine',
     'user_based': False  # Item-based collaborative filtering
 }
-knn_item = KNNBasic(sim_options=sim_options_item, verbose=False)  # <-- Suppress logs
+knn_item = KNNBasic(sim_options=sim_options_item, verbose=False)  # Suppress logs
 knn_item.fit(trainset)
 
 # Content-based filtering
@@ -44,7 +44,9 @@ cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 # Route for home page
 @app.route('/')
-def home():
+@app.route('/index')
+@app.route('/index.html')
+def index():
     # Get unique values for dropdowns
     car_types = sorted(cars_df['car_type'].unique())
     fuel_types = sorted(cars_df['fuel_type'].unique())
@@ -60,6 +62,12 @@ def home():
                            car_models=car_models,
                            car_makes=car_makes)
 
+# Route for home page
+@app.route('/home')
+@app.route('/home.html')
+def home_page():
+    return render_template('home.html')
+
 # Function to get content-based recommendations
 def get_content_based_recommendations(preferences, top_n=5):
     # Filter cars based on user preferences
@@ -69,8 +77,8 @@ def get_content_based_recommendations(preferences, top_n=5):
     if preferences.get('car_models') and preferences['car_models'] != "":
         filtered_cars = filtered_cars[filtered_cars['car_models'] == preferences['car_models']]
     
-    if preferences.get('car_make') and preferences['car_make'] != "":
-        filtered_cars = filtered_cars[filtered_cars['car_make'] == preferences['car_make']]  # Note: column is 'car_make' not 'car_makes'
+    if preferences.get('car_makes') and preferences['car_makes'] != "":
+        filtered_cars = filtered_cars[filtered_cars['car_make'] == preferences['car_makes']]  # Note: column is 'car_make' not 'car_makes'
 
     if preferences.get('car_type') and preferences['car_type'] != "":
         filtered_cars = filtered_cars[filtered_cars['car_type'] == preferences['car_type']]
@@ -110,7 +118,8 @@ def get_collaborative_recommendations(user_id, top_n=5):
         
         # Return car details
         return cars_df[cars_df['car_id'].isin(top_car_ids)].to_dict('records')
-    except:
+    except Exception as e:
+        print(f"Error in collaborative recommendations: {e}")
         # Return random cars if there's an error
         return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
 
@@ -141,7 +150,8 @@ def get_item_based_recommendations(user_id, top_n=5):
         
         # Return car details
         return cars_df[cars_df['car_id'].isin(top_car_ids)].to_dict('records')
-    except:
+    except Exception as e:
+        print(f"Error in item-based recommendations: {e}")
         # Return random cars if there's an error
         return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
 
@@ -191,25 +201,36 @@ def get_hybrid_recommendations(user_id, preferences, top_n=5):
 @app.route('/recommend', methods=['POST'])
 def recommend():
     data = request.json
-    user_id = data['user_id']
-    preferences = {
-        'car_models': data.get('car_models'),
-        'car_makes': data.get('car_makes'),
-        'car_type': data.get('car_type'),
-        'fuel_type': data.get('fuel_type'),
-        'transmission_type': data.get('transmission_type')
-    }
     
-    # Get all three types of recommendations regardless of selection
-    content_recs = get_content_based_recommendations(preferences)
-    collab_recs = get_collaborative_recommendations(user_id)
-    hybrid_recs = get_hybrid_recommendations(user_id, preferences)
-    
-    return jsonify({
-        'content_based': content_recs,
-        'collaborative_filtering': collab_recs,
-        'hybrid': hybrid_recs
-    })
+    try:
+        user_id = data.get('userId', '')
+        
+        preferences = {
+            'car_models': data.get('carModels', ''),
+            'car_makes': data.get('carMakes', ''),
+            'car_type': data.get('carType', ''),
+            'fuel_type': data.get('fuelType', ''),
+            'transmission_type': data.get('transmissionType', '')
+        }
+        
+        # Get all three types of recommendations
+        content_recs = get_content_based_recommendations(preferences)
+        collab_recs = get_collaborative_recommendations(user_id)
+        hybrid_recs = get_hybrid_recommendations(user_id, preferences)
+        
+        return jsonify({
+            'content_based': content_recs,
+            'collaborative_filtering': collab_recs,
+            'hybrid': hybrid_recs
+        })
+    except Exception as e:
+        print(f"Error in recommendation endpoint: {e}")
+        return jsonify({
+            'error': str(e),
+            'content_based': [],
+            'collaborative_filtering': [],
+            'hybrid': []
+        }), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

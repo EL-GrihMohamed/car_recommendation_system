@@ -33,81 +33,53 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show loading indicator
             loadingIndicator.style.display = 'block';
 
-            // Simulate API call (replace with actual fetch to your backend)
-            setTimeout(() => {
+            // Send request to the backend
+            fetch('/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(preferences),
+            })
+            .then(response => response.json())
+            .then(data => {
                 // Hide loading indicator
                 loadingIndicator.style.display = 'none';
 
-                // Example recommendation data (replace with actual data from backend)
-                const recommendations = {
-                    hybrid: [
-                        { 
-                            carMake: 'Toyota', 
-                            carModel: 'Prius', 
-                            carType: 'Hybrid', 
-                            fuelType: 'Hybrid', 
-                            transmissionType: 'Automatic',
-                            pricePerDay: 75 
-                        },
-                        { 
-                            carMake: 'Honda', 
-                            carModel: 'Insight', 
-                            carType: 'Hybrid', 
-                            fuelType: 'Hybrid', 
-                            transmissionType: 'Automatic',
-                            pricePerDay: 70 
-                        }
-                    ],
-                    contentBased: [
-                        { 
-                            carMake: 'Ford', 
-                            carModel: 'Mustang', 
-                            carType: 'Sports', 
-                            fuelType: 'Petrol', 
-                            transmissionType: 'Manual',
-                            pricePerDay: 100 
-                        }
-                    ],
-                    collaborativeBased: [
-                        { 
-                            carMake: 'BMW', 
-                            carModel: '3 Series', 
-                            carType: 'Sedan', 
-                            fuelType: 'Diesel', 
-                            transmissionType: 'Automatic',
-                            pricePerDay: 90 
-                        }
-                    ]
-                };
-
                 // Display recommendations
-                displayRecommendations(recommendations);
-            }, 1500);
+                displayCars(data.hybrid, 'hybrid-cars');
+                displayCars(data.content_based, 'content-cars');
+                displayCars(data.collaborative_filtering, 'collaborative-cars');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingIndicator.style.display = 'none';
+            });
         });
     }
 
-    function displayRecommendations(recommendations) {
-        // Display Hybrid Recommendations
-        const hybridContainer = document.getElementById('hybrid-cars');
-        hybridContainer.innerHTML = recommendations.hybrid.map(car => createCarCard(car)).join('');
-
-        // Display Content-Based Recommendations
-        const contentContainer = document.getElementById('content-cars');
-        contentContainer.innerHTML = recommendations.contentBased.map(car => createCarCard(car)).join('');
-
-        // Display Collaborative Recommendations
-        const collaborativeContainer = document.getElementById('collaborative-cars');
-        collaborativeContainer.innerHTML = recommendations.collaborativeBased.map(car => createCarCard(car)).join('');
+    function displayCars(cars, containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        
+        if (!cars || cars.length === 0) {
+            container.innerHTML = '<p>No recommendations available.</p>';
+            return;
+        }
+        
+        cars.forEach(car => {
+            container.innerHTML += createCarCard(car);
+        });
     }
 
     function createCarCard(car) {
         return `
             <div class="car-card">
-                <h3>${car.carMake} ${car.carModel}</h3>
-                <p>Type: ${car.carType}</p>
-                <p>Fuel: ${car.fuelType}</p>
-                <p>Transmission: ${car.transmissionType}</p>
-                <p>Price per day: $${car.pricePerDay}</p>
+                <h3>${car.car_make} ${car.car_models}</h3>
+                <p>Type: ${car.car_type}</p>
+                <p>Fuel: ${car.fuel_type}</p>
+                <p>Transmission: ${car.transmission_type}</p>
+                <p>Price per day: $${car.price_per_day || 75}</p>
                 <button class="btn btn__primary">Rent Now</button>
             </div>
         `;
