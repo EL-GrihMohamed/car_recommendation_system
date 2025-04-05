@@ -950,6 +950,32 @@ main {
     margin-bottom: 0.5rem;
 }
 
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Espace entre les boutons */
+    gap: 10px; /* Espacement entre les boutons */
+    margin-top: 10px;
+}
+
+.btn__primary, .cart_btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn__primary {
+    background-color: black;
+    color: white;
+}
+
+.cart_btn {
+    background-color: gray;
+    color: white;
+}
+
+
 .loading {
     text-align: center;
     display: none;
@@ -1266,3 +1292,37 @@ footer {
     z-index: -1;
     margin-top: 10px;
   }
+  /* Style pour l'input text du User ID */
+#user-id {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+#user-id:focus {
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+}
+
+.form-text {
+  color: #666;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Amélioration visuelle pour l'état d'erreur */
+#user-id.error {
+  border-color: #e74c3c;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}

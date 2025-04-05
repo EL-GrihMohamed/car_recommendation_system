@@ -49,7 +49,7 @@ cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 def index():
     return render_template('index.html')
 
-# Route for recommendation page (the page that was previously 'index.html' in your code)
+# Route for recommendation page
 @app.route('/rent')
 @app.route('/rent.html')
 def rent_page():
@@ -68,13 +68,13 @@ def rent_page():
                            car_models=car_models,
                            car_makes=car_makes)
 
-# New route for services page
+# Route for services page
 @app.route('/services')
 @app.route('/services.html')
 def services_page():
     return render_template('services.html')
 
-# New route for contact page
+# Route for contact page
 @app.route('/contact')
 @app.route('/contact.html')
 def contact_page():
@@ -167,12 +167,57 @@ def get_item_based_recommendations(user_id, top_n=5):
         # Return random cars if there's an error
         return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
 
+# Function to get purchase-based recommendations
+def get_purchase_based_recommendations(user_id, top_n=5):
+    try:
+        # Chargement du fichier CSV des achats
+        purchase_data = pd.read_csv('data/purchases.csv')
+        print(f"Loaded purchase data:\n{purchase_data.head()}")  # Log des données
+    except FileNotFoundError:
+        print("File not found, returning empty recommendations.")
+        return []
+
+    try:
+        # Convertir user_id dans le CSV en entier pour éviter les problèmes de type
+        purchase_data['user_id'] = purchase_data['user_id'].astype(int)
+        
+        # Convertir user_id de la requête en entier
+        user_id = int(user_id)
+
+        # Vérifier le type et la valeur de user_id avant de filtrer
+        print(f"Checking purchases for user_id: {user_id} (type: {type(user_id)})")
+
+        # Filtrer les achats de l'utilisateur
+        user_purchases = purchase_data[purchase_data['user_id'] == user_id]
+        print(f"User ID: {user_id} Purchases:\n{user_purchases}")  # Log des achats filtrés
+
+        # Si l'utilisateur n'a effectué aucun achat, retourner une liste vide d'informations de voitures
+        if user_purchases.empty:
+            print(f"No purchases found for User ID: {user_id}")
+            return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')  # Retourner des voitures aléatoires
+
+        # Obtenir les IDs des voitures achetées
+        purchased_car_ids = user_purchases['car_id'].tolist()
+        print(f"Purchased car IDs: {purchased_car_ids}")
+
+        # Pour une recommandation simple, on retourne les détails des voitures achetées
+        # Limité à top_n voitures
+        recommended_cars = cars_df[cars_df['car_id'].isin(purchased_car_ids[:top_n])]
+        
+        # Convertir en dictionnaire pour cohérence avec les autres fonctions de recommandation
+        return recommended_cars.to_dict('records')
+    except Exception as e:
+        print(f"Error in get_purchase_based_recommendations: {e}")
+        # En cas d'erreur, retourner des voitures aléatoires
+        return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
+
 # Function to get hybrid recommendations
 def get_hybrid_recommendations(user_id, preferences, top_n=5):
     # Get content-based and collaborative filtering recommendations
     content_recs = get_content_based_recommendations(preferences, top_n=top_n*2)
     collab_recs = get_collaborative_recommendations(user_id, top_n=top_n*2)
     item_recs = get_item_based_recommendations(user_id, top_n=top_n*2)
+    history_recs = get_purchase_based_recommendations(user_id, top_n=top_n*2)
     
     # Combine and score recommendations
     all_recs = {}
@@ -182,21 +227,28 @@ def get_hybrid_recommendations(user_id, preferences, top_n=5):
         car_id = car['car_id']
         if car_id not in all_recs:
             all_recs[car_id] = {'car': car, 'score': 0}
-        all_recs[car_id]['score'] += (top_n*2 - i) / (top_n*2) * 0.4  # 40% weight for content-based
+        all_recs[car_id]['score'] += (top_n*2 - i) / (top_n*2) * 0.3  # 30% weight for content-based
     
     # Score user-based collaborative recommendations
     for i, car in enumerate(collab_recs):
         car_id = car['car_id']
         if car_id not in all_recs:
             all_recs[car_id] = {'car': car, 'score': 0}
-        all_recs[car_id]['score'] += (top_n*2 - i) / (top_n*2) * 0.3  # 30% weight for user-based collab
+        all_recs[car_id]['score'] += (top_n*2 - i) / (top_n*2) * 0.25  # 25% weight for user-based collab
     
     # Score item-based collaborative recommendations
     for i, car in enumerate(item_recs):
         car_id = car['car_id']
         if car_id not in all_recs:
             all_recs[car_id] = {'car': car, 'score': 0}
-        all_recs[car_id]['score'] += (top_n*2 - i) / (top_n*2) * 0.3  # 30% weight for item-based collab
+        all_recs[car_id]['score'] += (top_n*2 - i) / (top_n*2) * 0.25  # 25% weight for item-based collab
+    
+    # Score history-based recommendations
+    for i, car in enumerate(history_recs):
+        car_id = car['car_id']
+        if car_id not in all_recs:
+            all_recs[car_id] = {'car': car, 'score': 0}
+        all_recs[car_id]['score'] += (top_n*2 - i) / (top_n*2) * 0.2  # 20% weight for history-based
     
     # Sort by final score
     sorted_recs = sorted(all_recs.values(), key=lambda x: x['score'], reverse=True)
@@ -210,39 +262,42 @@ def get_hybrid_recommendations(user_id, preferences, top_n=5):
     
     return recommendations
 
+# Route to get recommendations
 @app.route('/recommend', methods=['POST'])
 def recommend():
+    # Get JSON data from the request
     data = request.json
+
+    # Check if 'user_id' is present in the request
+    user_id = data.get('user_id')
+    if user_id is None:
+        return jsonify({"error": "'user_id' is required"}), 400  # Return error if 'user_id' is missing
     
-    try:
-        user_id = data.get('userId', '')
-        
-        preferences = {
-            'car_models': data.get('carModels', ''),
-            'car_makes': data.get('carMakes', ''),
-            'car_type': data.get('carType', ''),
-            'fuel_type': data.get('fuelType', ''),
-            'transmission_type': data.get('transmissionType', '')
-        }
-        
-        # Get all three types of recommendations
-        content_recs = get_content_based_recommendations(preferences)
-        collab_recs = get_collaborative_recommendations(user_id)
-        hybrid_recs = get_hybrid_recommendations(user_id, preferences)
-        
-        return jsonify({
-            'content_based': content_recs,
-            'collaborative_filtering': collab_recs,
-            'hybrid': hybrid_recs
-        })
-    except Exception as e:
-        print(f"Error in recommendation endpoint: {e}")
-        return jsonify({
-            'error': str(e),
-            'content_based': [],
-            'collaborative_filtering': [],
-            'hybrid': []
-        }), 500
+    # Get other preferences using .get() to avoid KeyError if keys are missing
+    preferences = {
+        'car_models': data.get('car_models'),
+        'car_makes': data.get('car_makes'),
+        'car_type': data.get('car_type'),
+        'fuel_type': data.get('fuel_type'),
+        'transmission_type': data.get('transmission_type')
+    }
+
+    # Display received data for debugging (optional)
+    print(f"Received data: {data}")
+    
+    # Get recommendations for all types
+    content_recs = get_content_based_recommendations(preferences)
+    collab_recs = get_collaborative_recommendations(user_id)
+    hybrid_recs = get_hybrid_recommendations(user_id, preferences)
+    history_recs = get_purchase_based_recommendations(user_id)
+
+    # Return recommendations as JSON
+    return jsonify({
+        'content_based': content_recs,
+        'collaborative_filtering': collab_recs,
+        'hybrid': hybrid_recs,
+        'history_based': history_recs
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

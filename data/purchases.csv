@@ -1,4 +1,4 @@
-car_id,car_make,car_models,car_type,fuel_type,transmission_type,price_per_day,year
+car_id,car_make,car_model,car_type,fuel_type,transmission_type,price_per_day,year
 1,Toyota,Sedan,Economy,Gasoline,CVT,92,2023
 2,Honda,SUV,Compact,Gasoline,Manual,147,2018
 4,BMW,Coupe,Luxury,Electric,CVT,56,2020
