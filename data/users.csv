@@ -1,6 +1,6 @@
 user_id,age,gender,preferred_car_type,preferred_fuel_type
-1,27,Female,Economy,Gasoline
-2,55,Male,Sport,Gasoline
-3,57,Female,Economy,Electric
-4,44,Female,Compact,Gasoline
-5,46,Male,Sport,Hybrid
+P100088,27,Female,Economy,Gasoline
+L200079,55,Male,Sport,Gasoline
+G300057,57,Female,Economy,Electric
+P400044,44,Female,Compact,Gasoline
+L500046,46,Male,Sport,Hybrid

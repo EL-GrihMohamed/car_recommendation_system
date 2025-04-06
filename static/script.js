@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.getElementById("nav-links");
     const menuBtnIcon = menuBtn ? menuBtn.querySelector("i") : null;
 
+    // Define valid user IDs
+    const VALID_USER_IDS = ["P100088", "L200079", "G300057", "P400044", "L500046"];
+
     // Tab switching functionality
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -22,15 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
         recommendBtn.addEventListener('click', () => {
             const userId = document.getElementById('user-id').value.trim();
             
-            // Vérifier si l'ID utilisateur est valide
+            // Check if user ID is provided
             if (!userId) {
                 alert("Veuillez entrer un ID utilisateur pour obtenir des recommandations personnalisées");
                 return;
             }
             
-            // Vérifier si c'est un nombre (si vos IDs sont numériques)
-            if (isNaN(userId)) {
-                alert("Veuillez entrer un ID utilisateur valide (nombre)");
+            // Check if the user ID is in our list of valid IDs
+            if (!VALID_USER_IDS.includes(userId)) {
+                alert("ID utilisateur invalide. Veuillez utiliser l'un des IDs utilisateurs fournis (ex: P100088, L200079, etc.)");
                 return;
             }
 
@@ -46,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Préférences envoyées:", preferences);
             loadingIndicator.style.display = 'block';
 
-            // Vider les conteneurs
+            // Clear containers
             document.querySelectorAll('.cars-grid').forEach(container => {
                 container.innerHTML = '';
             });
@@ -60,7 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Erreur HTTP: ${response.status}`);
+                    return response.json().then(data => {
+                        throw new Error(data.error || `Erreur HTTP: ${response.status}`);
+                    });
                 }
                 return response.json();
             })
@@ -78,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.warn("Aucune donnée collaborative reçue");
                 }
 
-                // Affichage des recommandations
+                // Display recommendations
                 const historyContainer = document.getElementById('history-cars');
                 if (historyContainer) {
                     displayCars(data.history_based || [], 'history-cars');
@@ -90,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => {
                 console.error('Erreur:', error);
                 loadingIndicator.style.display = 'none';
-                const errorMessage = '<p class="error-message">Une erreur s\'est produite lors de la récupération des recommandations. Veuillez réessayer.</p>';
+                alert(error.message || 'Une erreur s\'est produite lors de la récupération des recommandations. Veuillez réessayer.');
+                const errorMessage = `<p class="error-message">${error.message || 'Une erreur s\'est produite lors de la récupération des recommandations. Veuillez réessayer.'}</p>`;
                 document.querySelectorAll('.cars-grid').forEach(container => {
                     container.innerHTML = errorMessage;
                 });
@@ -98,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Fonction pour afficher les recommandations collaboratives avec logs détaillés
+    // Function to display collaborative recommendations with detailed logs
     function displayCollaborativeRecommendations(cars, containerId) {
         console.log(`Début de l'affichage pour ${containerId} avec ${cars.length} voitures`);
         const container = document.getElementById(containerId);
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Fonction pour afficher les autres types de recommandations
+    // Function to display other types of recommendations
     function displayCars(cars, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -148,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Fonction pour créer le HTML d'une carte de voiture
+    // Function to create the HTML for a car card
     function createCarCardHTML(car) {
         if (!car) {
             console.error("Objet voiture invalide:", car);
@@ -175,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
                    <button class="btn btn__primary">Rent Now</button>
                    <button class="cart_btn">Add to Cart</button>
                 </div>
-
             </div>
         `;
     }
@@ -225,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const index = args && args[0] && args[0].realIndex !== undefined ? args[0].realIndex : 0;
                 priceEl.innerText = price[index] || "";
                 selectCards.forEach((item) => item.classList.remove("show__info"));
-                if (selectCards[index]) selectCards[index].ClassList.add("show__info");
+                if (selectCards[index]) selectCards[index].classList.add("show__info");
             }
         }
 

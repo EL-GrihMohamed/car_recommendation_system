@@ -14,6 +14,9 @@ cars_df = pd.read_csv('data/cars.csv')
 ratings_df = pd.read_csv('data/ratings.csv')
 users_df = pd.read_csv('data/users.csv')
 
+# Define valid user IDs
+VALID_USER_IDS = ["P100088", "L200079", "G300057", "P400044", "L500046"]
+
 # Prepare data for Surprise
 reader = Reader(rating_scale=(1, 5))
 data = Dataset.load_from_df(ratings_df[['user_id', 'car_id', 'rating']], reader)
@@ -57,7 +60,8 @@ def rent_page():
     car_types = sorted(cars_df['car_type'].unique())
     fuel_types = sorted(cars_df['fuel_type'].unique())
     transmission_types = sorted(cars_df['transmission_type'].unique())
-    user_ids = sorted(users_df['user_id'].unique())
+    # Now pass the predefined list of valid user IDs
+    user_ids = VALID_USER_IDS
     car_models = sorted(cars_df['car_models'].unique())
     car_makes = sorted(cars_df['car_make'].unique())
     return render_template('rent.html', 
@@ -111,7 +115,6 @@ def get_content_based_recommendations(preferences, top_n=5):
 # Function to get collaborative filtering recommendations
 def get_collaborative_recommendations(user_id, top_n=5):
     try:
-        user_id = int(user_id)
         # Get all cars not rated by the user
         all_car_ids = cars_df['car_id'].unique()
         user_ratings = ratings_df[ratings_df['user_id'] == user_id]['car_id'].unique()
@@ -138,7 +141,6 @@ def get_collaborative_recommendations(user_id, top_n=5):
 # Function to get item-based recommendations
 def get_item_based_recommendations(user_id, top_n=5):
     try:
-        user_id = int(user_id)
         # Get cars rated by the user
         user_rated_cars = ratings_df[ratings_df['user_id'] == user_id]['car_id'].unique()
         
@@ -170,45 +172,39 @@ def get_item_based_recommendations(user_id, top_n=5):
 # Function to get purchase-based recommendations
 def get_purchase_based_recommendations(user_id, top_n=5):
     try:
-        # Chargement du fichier CSV des achats
+        # Load the CSV file of purchases
         purchase_data = pd.read_csv('data/purchases.csv')
-        print(f"Loaded purchase data:\n{purchase_data.head()}")  # Log des données
+        print(f"Loaded purchase data:\n{purchase_data.head()}")  # Log data
     except FileNotFoundError:
         print("File not found, returning empty recommendations.")
         return []
 
     try:
-        # Convertir user_id dans le CSV en entier pour éviter les problèmes de type
-        purchase_data['user_id'] = purchase_data['user_id'].astype(int)
-        
-        # Convertir user_id de la requête en entier
-        user_id = int(user_id)
-
-        # Vérifier le type et la valeur de user_id avant de filtrer
+        # Check the type and value of user_id before filtering
         print(f"Checking purchases for user_id: {user_id} (type: {type(user_id)})")
 
-        # Filtrer les achats de l'utilisateur
+        # Filter purchases for the user
         user_purchases = purchase_data[purchase_data['user_id'] == user_id]
-        print(f"User ID: {user_id} Purchases:\n{user_purchases}")  # Log des achats filtrés
+        print(f"User ID: {user_id} Purchases:\n{user_purchases}")  # Log filtered purchases
 
-        # Si l'utilisateur n'a effectué aucun achat, retourner une liste vide d'informations de voitures
+        # If the user has no purchases, return random cars
         if user_purchases.empty:
             print(f"No purchases found for User ID: {user_id}")
-            return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')  # Retourner des voitures aléatoires
+            return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')  # Return random cars
 
-        # Obtenir les IDs des voitures achetées
+        # Get the car IDs of purchased cars
         purchased_car_ids = user_purchases['car_id'].tolist()
         print(f"Purchased car IDs: {purchased_car_ids}")
 
-        # Pour une recommandation simple, on retourne les détails des voitures achetées
-        # Limité à top_n voitures
+        # For a simple recommendation, return the details of purchased cars
+        # Limited to top_n cars
         recommended_cars = cars_df[cars_df['car_id'].isin(purchased_car_ids[:top_n])]
         
-        # Convertir en dictionnaire pour cohérence avec les autres fonctions de recommandation
+        # Convert to dictionary for consistency with other recommendation functions
         return recommended_cars.to_dict('records')
     except Exception as e:
         print(f"Error in get_purchase_based_recommendations: {e}")
-        # En cas d'erreur, retourner des voitures aléatoires
+        # In case of error, return random cars
         return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
 
 # Function to get hybrid recommendations
@@ -272,6 +268,10 @@ def recommend():
     user_id = data.get('user_id')
     if user_id is None:
         return jsonify({"error": "'user_id' is required"}), 400  # Return error if 'user_id' is missing
+    
+    # Validate that the user_id is one of the allowed IDs
+    if user_id not in VALID_USER_IDS:
+        return jsonify({"error": "Invalid user ID. Please use one of the provided user IDs."}), 400
     
     # Get other preferences using .get() to avoid KeyError if keys are missing
     preferences = {
