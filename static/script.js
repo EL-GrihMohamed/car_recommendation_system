@@ -9,6 +9,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // Define valid user IDs
     const VALID_USER_IDS = ["P100088", "L200079", "G300057", "P400044", "L500046"];
 
+    // Define car options from your data
+    const car_makes = ['Toyota', 'Honda', 'Ford', 'BMW', 'Mercedes', 'Audi', 'Volkswagen', 'Nissan', 'Hyundai', 'Kia'];
+    const car_models_list = ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Convertible'];
+    const car_types = ['Economy', 'Compact', 'Mid-size', 'Full-size', 'Luxury', 'Sport', 'SUV', 'Minivan'];
+    const fuel_types = ['Gasoline', 'Electric', 'Hybrid', 'Diesel'];
+    const transmission_types = ['Automatic', 'Manual', 'CVT'];
+    
+    // Initialize selection buttons
+    const initSelectionButtons = (container, options, field) => {
+        const containerElement = document.getElementById(container);
+        if (!containerElement) return;
+        
+        containerElement.innerHTML = '';
+        
+        options.forEach(option => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'option-btn';
+            button.textContent = option;
+            button.dataset.value = option;
+            button.addEventListener('click', () => {
+                // Toggle button state
+                if (button.classList.contains('active')) {
+                    button.classList.remove('active');
+                } else {
+                    // Remove active class from all buttons in this container
+                    containerElement.querySelectorAll('.option-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    button.classList.add('active');
+                }
+            });
+            containerElement.appendChild(button);
+        });
+    };
+    
+    // Initialize all selection buttons
+    initSelectionButtons('car-make-selection', car_makes, 'car_makes');
+    initSelectionButtons('car-model-selection', car_models_list, 'car_models');
+    initSelectionButtons('car-type-selection', car_types, 'car_type');
+    initSelectionButtons('fuel-type-selection', fuel_types, 'fuel_type');
+    initSelectionButtons('transmission-type-selection', transmission_types, 'transmission_type');
+
     // Tab switching functionality
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -27,26 +70,32 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Check if user ID is provided
             if (!userId) {
-                alert("Veuillez entrer un ID utilisateur pour obtenir des recommandations personnalisées");
+                alert("Please enter a user ID to get personalized recommendations");
                 return;
             }
             
             // Check if the user ID is in our list of valid IDs
             if (!VALID_USER_IDS.includes(userId)) {
-                alert("ID utilisateur invalide. Veuillez utiliser l'un des IDs utilisateurs fournis (ex: P100088, L200079, etc.)");
+                alert("Invalid user ID. Please use one of the provided user IDs (e.g., P100088, L200079, etc.)");
                 return;
             }
 
-            const preferences = {
-                user_id: userId,
-                car_models: document.getElementById('car_models').value,
-                car_makes: document.getElementById('car_makes').value,
-                car_type: document.getElementById('car-type').value,
-                fuel_type: document.getElementById('fuel-type').value,
-                transmission_type: document.getElementById('transmission-type').value
+            // Get selected values from buttons
+            const getSelectedValue = (containerId) => {
+                const activeButton = document.querySelector(`#${containerId} .option-btn.active`);
+                return activeButton ? activeButton.dataset.value : '';
             };
 
-            console.log("Préférences envoyées:", preferences);
+            const preferences = {
+                user_id: userId,
+                car_models: getSelectedValue('car-model-selection'),
+                car_makes: getSelectedValue('car-make-selection'),
+                car_type: getSelectedValue('car-type-selection'),
+                fuel_type: getSelectedValue('fuel-type-selection'),
+                transmission_type: getSelectedValue('transmission-type-selection')
+            };
+
+            console.log("Preferences sent:", preferences);
             loadingIndicator.style.display = 'block';
 
             // Clear containers
@@ -64,23 +113,23 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(data => {
-                        throw new Error(data.error || `Erreur HTTP: ${response.status}`);
+                        throw new Error(data.error || `HTTP Error: ${response.status}`);
                     });
                 }
                 return response.json();
             })
             .then(data => {
-                console.log("Réponse complète de l'API:", data);
+                console.log("Complete API response:", data);
                 loadingIndicator.style.display = 'none';
 
                 if (data.collaborative_filtering) {
-                    console.log("Données collaboratives reçues:", data.collaborative_filtering);
-                    console.log("Nombre d'éléments:", data.collaborative_filtering.length);
+                    console.log("Collaborative data received:", data.collaborative_filtering);
+                    console.log("Number of items:", data.collaborative_filtering.length);
                     if (data.collaborative_filtering.length > 0) {
-                        console.log("Premier élément:", data.collaborative_filtering[0]);
+                        console.log("First item:", data.collaborative_filtering[0]);
                     }
                 } else {
-                    console.warn("Aucune donnée collaborative reçue");
+                    console.warn("No collaborative data received");
                 }
 
                 // Display recommendations
@@ -93,10 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayCollaborativeRecommendations(data.collaborative_filtering || [], 'collaborative-cars');
             })
             .catch(error => {
-                console.error('Erreur:', error);
+                console.error('Error:', error);
                 loadingIndicator.style.display = 'none';
-                alert(error.message || 'Une erreur s\'est produite lors de la récupération des recommandations. Veuillez réessayer.');
-                const errorMessage = `<p class="error-message">${error.message || 'Une erreur s\'est produite lors de la récupération des recommandations. Veuillez réessayer.'}</p>`;
+                alert(error.message || 'An error occurred when retrieving recommendations. Please try again.');
+                const errorMessage = `<p class="error-message">${error.message || 'An error occurred when retrieving recommendations. Please try again.'}</p>`;
                 document.querySelectorAll('.cars-grid').forEach(container => {
                     container.innerHTML = errorMessage;
                 });
@@ -106,30 +155,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to display collaborative recommendations with detailed logs
     function displayCollaborativeRecommendations(cars, containerId) {
-        console.log(`Début de l'affichage pour ${containerId} avec ${cars.length} voitures`);
+        console.log(`Starting display for ${containerId} with ${cars.length} cars`);
         const container = document.getElementById(containerId);
         if (!container) {
-            console.error(`Le conteneur ${containerId} n'existe pas`);
+            console.error(`Container ${containerId} does not exist`);
             return;
         }
 
         container.innerHTML = '';
 
         if (!cars || !Array.isArray(cars) || cars.length === 0) {
-            console.warn(`Pas de recommandations disponibles pour ${containerId}`);
+            console.warn(`No recommendations available for ${containerId}`);
             container.innerHTML = '<p>No recommendations available. This could be because there are not enough similar users with ratings.</p>';
             return;
         }
 
         cars.forEach((car, index) => {
-            console.log(`Traitement de la voiture ${index}:`, car);
+            console.log(`Processing car ${index}:`, car);
             try {
                 const carCard = document.createElement('div');
                 carCard.className = 'car-card';
                 carCard.innerHTML = createCarCardHTML(car);
                 container.appendChild(carCard);
             } catch (e) {
-                console.error(`Erreur lors de l'affichage de la voiture ${index}:`, e);
+                console.error(`Error displaying car ${index}:`, e);
             }
         });
     }
@@ -157,8 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to create the HTML for a car card
     function createCarCardHTML(car) {
         if (!car) {
-            console.error("Objet voiture invalide:", car);
-            return "<p>Erreur: données de voiture invalides</p>";
+            console.error("Invalid car object:", car);
+            return "<p>Error: invalid car data</p>";
         }
 
         const carMake = car.car_make || car.make || 'Unknown Make';
@@ -170,16 +219,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const year = car.year || 'N/A';
 
         return `
-            <div class="car-card">
+            <div>
                 <h3>${carMake} ${carModel}</h3>
                 <p>Type: ${carType}</p>
                 <p>Fuel: ${fuelType}</p>
                 <p>Transmission: ${transmissionType}</p>
                 <p>Price per day: $${price}</p>
                 <p>Year: ${year}</p>
-                <div class="button-container">
+                <div >
                    <button class="btn btn__primary">Rent Now</button>
-                   <button class="cart_btn">Add to Cart</button>
                 </div>
             </div>
         `;
@@ -216,6 +264,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ScrollReveal().reveal(".location__content p", { ...scrollRevealOption, delay: 1000 });
         ScrollReveal().reveal(".location__content .location__btn", { ...scrollRevealOption, delay: 1500 });
         ScrollReveal().reveal(".story__card", { ...scrollRevealOption, interval: 500 });
+        
+        // This section uses ScrollReveal for animation
+        ScrollReveal().reveal(".range__card", {
+            duration: 1000,
+            interval: 500,
+        });
     }
 
     // Swiper initialization

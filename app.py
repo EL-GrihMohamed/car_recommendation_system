@@ -55,22 +55,29 @@ def index():
 # Route for recommendation page
 @app.route('/rent')
 @app.route('/rent.html')
-def rent_page():
-    # Get unique values for dropdowns
-    car_types = sorted(cars_df['car_type'].unique())
-    fuel_types = sorted(cars_df['fuel_type'].unique())
-    transmission_types = sorted(cars_df['transmission_type'].unique())
-    # Now pass the predefined list of valid user IDs
-    user_ids = VALID_USER_IDS
-    car_models = sorted(cars_df['car_models'].unique())
-    car_makes = sorted(cars_df['car_make'].unique())
+def rent():
+    # Define your data
+    alpha_user_ids = {
+        1: "P100088", 
+        2: "L200079", 
+        3: "G300057", 
+        4: "P400044", 
+        5: "L500046"
+    }
+    car_makes = ['Toyota', 'Honda', 'Ford', 'BMW', 'Mercedes', 'Audi', 'Volkswagen', 'Nissan', 'Hyundai', 'Kia']
+    car_models = ['Sedan', 'SUV', 'Hatchback', 'Coupe', 'Convertible', 'Wagon', 'Truck', 'Van']
+    car_types = ['Economy', 'Compact', 'Mid-size', 'Full-size', 'Luxury', 'Sport', 'SUV', 'Minivan']
+    fuel_types = ['Gasoline', 'Electric', 'Hybrid', 'Diesel']
+    transmission_types = ['Automatic', 'Manual', 'CVT']
+    
+    # Pass all variables to the template
     return render_template('rent.html', 
-                           car_types=car_types,
-                           fuel_types=fuel_types,
-                           transmission_types=transmission_types,
-                           user_ids=user_ids,
-                           car_models=car_models,
-                           car_makes=car_makes)
+                          alpha_user_ids=alpha_user_ids,
+                          car_makes=car_makes, 
+                          car_models=car_models,
+                          car_types=car_types,
+                          fuel_types=fuel_types,
+                          transmission_types=transmission_types)
 
 # Route for services page
 @app.route('/services')

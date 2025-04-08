@@ -26,65 +26,86 @@
           </div>
         </nav>
       </header>
-
-    <main class="rent-page">
-        <div class="section__container preferences-container">
-            <h1>Find Your Perfect Rental Car</h1>
-            <div class="preferences-form">
-                <h2>Select Your Preferences</h2>
-                <div class="form-group">
-                    <label for="user-id">User ID:</label>
-                    <input type="text" id="user-id" placeholder="Entrez votre ID utilisateur" required>
-                    <small class="form-text text-muted">Veuillez saisir votre identifiant pour recevoir des recommandations personnalisées</small>
-                </div>
-                <div class="form-group">
-                    <label for="car_models">Car Model:</label>
-                    <select id="car_models">
-                        <option value="">Any</option>
-                        {% for car_models in car_models %}
-                        <option value="{{ car_models }}">{{ car_models }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="car_makes">Car Make:</label>
-                    <select id="car_makes">
-                        <option value="">Any</option>
-                        {% for car_makes in car_makes %}
-                        <option value="{{ car_makes }}">{{ car_makes }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="car-type">Car Type:</label>
-                    <select id="car-type">
-                        <option value="">Any</option>
-                        {% for car_type in car_types %}
-                        <option value="{{ car_type }}">{{ car_type }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="fuel-type">Fuel Type:</label>
-                    <select id="fuel-type">
-                        <option value="">Any</option>
-                        {% for fuel_type in fuel_types %}
-                        <option value="{{ fuel_type }}">{{ fuel_type }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="transmission-type">Transmission Type:</label>
-                    <select id="transmission-type">
-                        <option value="">Any</option>
-                        {% for transmission_type in transmission_types %}
-                        <option value="{{ transmission_type }}">{{ transmission_type }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button id="recommend-btn" class="btn btn__primary">Get Recommendations</button>
+    <section class="section__container range__container" id="about">
+        <h2 class="section__header">WIDE RANGE OF VEHICLES</h2>
+        <div class="range__grid">
+          <div class="range__card">
+            <img src="{{ url_for('static', filename='images/range-1.jpg') }}" alt="range" />
+            <div class="range__details">
+              <h4>CARS</h4>
+              <a href="#"><i class="ri-arrow-right-line"></i></a>
             </div>
+          </div>
+          <div class="range__card">
+            <img src="{{ url_for('static', filename='images/range-2.jpg') }}" alt="range" />
+            <div class="range__details">
+              <h4>SUVS</h4>
+              <a href="#"><i class="ri-arrow-right-line"></i></a>
+            </div>
+          </div>
+          <div class="range__card">
+            <img src="{{ url_for('static', filename='images/range-3.jpg') }}" alt="range" />
+            <div class="range__details">
+              <h4>VANS</h4>
+              <a href="#"><i class="ri-arrow-right-line"></i></a>
+            </div>
+          </div>
+          <div class="range__card">
+            <img src="{{ url_for('static', filename='images/range-4.jpg') }}" alt="range" />
+            <div class="range__details">
+              <h4>ELECTRIC</h4>
+              <a href="#"><i class="ri-arrow-right-line"></i></a>
+            </div>
+          </div>
         </div>
+    </section>
+    <div class="section__container preferences-container">
+        <h1>Find Your Perfect Rental Car</h1>
+        <div class="preferences-form">
+            <div class="form-group">
+                <label for="user-id">User ID:</label>
+                <input type="text" id="user-id" placeholder="Enter your user ID" required>
+                <small class="form-text text-muted">Please enter your user ID to receive personalized recommendations</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Car Make</label>
+                <div class="button-selection" id="car-make-selection">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Car Model</label>
+                <div class="button-selection" id="car-model-selection">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Car Type</label>
+                <div class="button-selection" id="car-type-selection">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Fuel Type</label>
+                <div class="button-selection" id="fuel-type-selection">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Transmission Type</label>
+                <div class="button-selection" id="transmission-type-selection">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <button id="recommend-btn" class="btn btn__primary">Get Recommendations</button>
+        </div>
+    </div>
 
         <div class="section__container recommendations-container">
             <div class="loading" id="loading">
@@ -94,27 +115,10 @@
                 <p>Finding the best cars for you...</p>
             </div>
 
-            <div class="tabs">
-                <button class="tab-button active" data-tab="hybrid">Hybrid Recommendations</button>
-                
-            </div>
-
             <div class="tab-content active" id="hybrid-recommendations">
-                <h2>Hybrid Recommendations</h2>
-                <p class="description">Recommendations based on both your preferences and similar users' choices</p>
+                <h2>Recommendations</h2>
+                
                 <div class="cars-grid" id="hybrid-cars"></div>
-            </div>
-
-            <div class="tab-content" id="content-recommendations">
-                <h2>Recommendations Based on Your Preferences</h2>
-                <p class="description">Cars that match your selected preferences</p>
-                <div class="cars-grid" id="content-cars"></div>
-            </div>
-
-            <div class="tab-content" id="collaborative-recommendations">
-                <h2>Recommendations Based on Similar Users</h2>
-                <p class="description">Cars that users similar to you have highly rated</p>
-                <div class="cars-grid" id="collaborative-cars"></div>
             </div>
         </div>
     </main>
@@ -166,6 +170,7 @@
     </footer>
 
     <script src="../static/script.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
 </body>
 
 </html>

@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <header>
+  <header class="background">
     <nav>
       <div class="nav__logo">
         <a href="#">RENTIX</a>
@@ -241,6 +241,72 @@
         <img src="{{ url_for('static', filename='images/banner-8.png') }}" alt="banner" />
         <img src="{{ url_for('static', filename='images/banner-9.png') }}" alt="banner" />
         <img src="{{ url_for('static', filename='images/banner-10.png') }}" alt="banner" />
+      </div>
+    </section>
+    <section class="section__container testimonials__container" id="testimonials">
+      <p class="section__subheader">LES AVIS</p>
+      <h2 class="section__header">Ce que nos clients disent</h2>
+      
+      <div class="testimonials__grid">
+        <div class="testimonial__card">
+          <div class="testimonial__rating">
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+          </div>
+          <p class="testimonial__text">
+            "J'ai loué une voiture chez RentalX pour mon voyage d'affaires et j'ai été impressionné par la qualité du service. La voiture était impeccable et le processus de location très simple. Je recommande vivement!"
+          </p>
+          <div class="testimonial__author">
+            <img src="{{ url_for('static', filename='images/user-1.png') }}" alt="testimonial"/>
+            <div>
+              <h4>Sophie Martin</h4>
+              <p>Paris, France</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial__card">
+          <div class="testimonial__rating">
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-half-fill"></i>
+          </div>
+          <p class="testimonial__text">
+            "Le service client de RentalX est exceptionnel. J'ai eu un problème avec ma réservation et ils ont tout résolu rapidement. La voiture était confortable et économique en carburant. Parfait pour notre voyage en famille."
+          </p>
+          <div class="testimonial__author">
+            <img src="{{ url_for('static', filename='images/user-2.png') }}" alt="testimonial" />
+            <div>
+              <h4>Thomas Dubois</h4>
+              <p>Lyon, France</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial__card">
+          <div class="testimonial__rating">
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-fill"></i>
+            <i class="ri-star-line"></i>
+          </div>
+          <p class="testimonial__text">
+            "C'était ma première fois avec RentalX et je suis très satisfait. Les prix sont compétitifs et la gamme de véhicules est impressionnante. J'ai particulièrement apprécié les options de paiement flexibles et l'assistance routière disponible 24/7."
+          </p>
+          <div class="testimonial__author">
+            <img src="{{ url_for('static', filename='images/user-3.png') }}" alt="testimonial"/>
+            <div>
+              <h4>Marie Leclerc</h4>
+              <p>Marseille, France</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
