@@ -872,11 +872,12 @@ main {
 
 /* Rent Page Styles */
 .preferences-container {
-    background-color: var(--extra-light);
+  background-color: #ffffff; /* White background */
+  padding: 2rem 0;
 }
 
 .preferences-form {
-    background-color: var(--white);
+    background-color: #f5f5f5;
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -1585,4 +1586,260 @@ footer {
 .testimonial__author p {
   color: var(--text-light);
   font-size: 0.9rem;
+}
+/* Contact Page Styles */
+.h2contact {
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  font-family: var(--header-font);
+  color: var(--text-dark);
+}
+
+.contact {
+  position: relative;
+  margin-top: 80px;
+  padding: 3rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: var(--white);
+}
+
+.contact .content {
+  max-width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.content2 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  color: var(--text-dark);
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.content2 .contactInfo {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content2 .contactInfo .box {
+  position: relative;
+  padding: 1rem 0;
+  display: flex;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.text h3 i {
+  position: relative;
+  min-width: 30px;
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  margin-right: 10px;
+}
+
+.content2 .contactInfo .box .text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+}
+
+.content2 .contactInfo .box .text h3 {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.content2 .contactInfo .box .text p {
+  color: var(--text-light);
+}
+
+.scisec {
+  margin-top: 2rem;
+}
+
+.content2 .contactInfo .txt {
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  padding-left: 10px;
+  border-left: 5px solid var(--primary-color);
+  line-height: 1.5rem;
+}
+
+.content2 .contactInfo .sci {
+  position: relative;
+  display: flex;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.content2 .contactInfo .sci li {
+  list-style: none;
+}
+
+.content2 .contactInfo .sci li a {
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  transition: 0.3s;
+}
+
+.content2 .contactInfo .sci li a:hover {
+  color: var(--primary-color);
+}
+
+.content2 .contactform {
+  position: relative;
+  width: 100%;
+  padding: 2rem;
+  background-color: var(--extra-light);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.content2 .contactform form {
+  position: relative;
+  width: 100%;
+}
+
+.content2 .contactform form h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+}
+
+.content2 .contactform form .inputBox {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.content2 .contactform form .inputBox input,
+.content2 .contactform form .inputBox textarea {
+  width: 100%;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid var(--text-light);
+  color: var(--text-dark);
+  outline: none;
+  resize: none;
+}
+
+.content2 .contactform form .inputBox span {
+  position: absolute;
+  left: 0;
+  pointer-events: none;
+  padding: 0.75rem 0;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: var(--text-light);
+  transition: 0.3s;
+}
+
+.content2 .contactform form .inputBox input:focus ~ span,
+.content2 .contactform form .inputBox textarea:focus ~ span,
+.content2 .contactform form .inputBox input:valid ~ span,
+.content2 .contactform form .inputBox textarea:valid ~ span {
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  transform: translateY(-20px);
+}
+
+.content2 .contactform form .inputBox input[type="submit"] {
+  width: 100%;
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.content2 .contactform form .inputBox input[type="submit"]:hover {
+  background-color: var(--primary-color-dark);
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+  .content2 {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0 2rem;
+  }
+
+  .content2 .contactInfo {
+    width: 40%;
+  }
+
+  .content2 .contactform {
+    width: 55%;
+  }
+}
+.service__container {
+  display: grid;
+  gap: 2rem;
+  overflow: hidden;
+}
+
+.service__list {
+  margin-top: 2rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.service__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.service__list li span {
+  padding: 12px 15px;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  background-color: var(--extra-light);
+  border: 4px solid var(--white);
+  border-radius: 5px;
+  box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.service__list h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.service__list p {
+  color: var(--text-light);
+  line-height: 1.75rem;
+}
+
+/* Responsive design for service section */
+@media (width > 768px) {
+  .service__container {
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+  }
 }

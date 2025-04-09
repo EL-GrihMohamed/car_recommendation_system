@@ -22,20 +22,20 @@ reader = Reader(rating_scale=(1, 5))
 data = Dataset.load_from_df(ratings_df[['user_id', 'car_id', 'rating']], reader)
 trainset = data.build_full_trainset()
 
-# Train KNN model with cosine similarity
+
 sim_options = {
-    'name': 'cosine',
-    'user_based': True  # User-based collaborative filtering
+    'name': 'cosine', # Mesure de similarité
+    'user_based': True # Mode de filtrage basé sur les utilisateurs
 }
-knn_user = KNNBasic(sim_options=sim_options, verbose=False)  # Suppress logs
+knn_user = KNNBasic(sim_options=sim_options, verbose=False)  
 knn_user.fit(trainset)
 
 # Also train item-based model
 sim_options_item = {
     'name': 'cosine',
-    'user_based': False  # Item-based collaborative filtering
+    'user_based': False  # Filtrage collaboratif basé sur les items
 }
-knn_item = KNNBasic(sim_options=sim_options_item, verbose=False)  # Suppress logs
+knn_item = KNNBasic(sim_options=sim_options_item, verbose=False)  
 knn_item.fit(trainset)
 
 # Content-based filtering
@@ -93,10 +93,10 @@ def contact_page():
 
 # Function to get content-based recommendations
 def get_content_based_recommendations(preferences, top_n=5):
-    # Filter cars based on user preferences
+    # Filtrer les voitures selon les préférences utilisateur
     filtered_cars = cars_df.copy()
     
-    # Only apply filters for non-empty preferences
+    # Appliquer uniquement les filtres pour les préférences non vides
     if preferences.get('car_models') and preferences['car_models'] != "":
         filtered_cars = filtered_cars[filtered_cars['car_models'] == preferences['car_models']]
     
@@ -112,33 +112,31 @@ def get_content_based_recommendations(preferences, top_n=5):
     if preferences.get('transmission_type') and preferences['transmission_type'] != "":
         filtered_cars = filtered_cars[filtered_cars['transmission_type'] == preferences['transmission_type']]
     
-    # If no cars match the criteria or no filters were applied, return a sample of cars
+    # Si aucune voiture ne correspond aux critères ou aucun filtre n'a été appliqué, retourner un échantillon
     if filtered_cars.empty:
         return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
-    
-    # Return the filtered cars
+    # Retourner les voitures filtrées
     return filtered_cars.head(top_n).to_dict('records')
 
-# Function to get collaborative filtering recommendations
 def get_collaborative_recommendations(user_id, top_n=5):
     try:
-        # Get all cars not rated by the user
+        # Obtenir toutes les voitures non évaluées par l'utilisateur
         all_car_ids = cars_df['car_id'].unique()
         user_ratings = ratings_df[ratings_df['user_id'] == user_id]['car_id'].unique()
         unrated_cars = np.setdiff1d(all_car_ids, user_ratings)
         
-        # Get predictions for user
+        # Générer des prédictions pour l'utilisateur
         predictions = []
         for car_id in unrated_cars:
             predictions.append((car_id, knn_user.predict(user_id, car_id).est))
         
-        # Sort by estimated rating
+        # Trier par évaluation estimée
         predictions.sort(key=lambda x: x[1], reverse=True)
         
-        # Get top N car IDs
+        # Obtenir les IDs des N meilleures voitures
         top_car_ids = [pred[0] for pred in predictions[:top_n]]
         
-        # Return car details
+        # Retourner les détails des voitures
         return cars_df[cars_df['car_id'].isin(top_car_ids)].to_dict('records')
     except Exception as e:
         print(f"Error in collaborative recommendations: {e}")
@@ -148,32 +146,32 @@ def get_collaborative_recommendations(user_id, top_n=5):
 # Function to get item-based recommendations
 def get_item_based_recommendations(user_id, top_n=5):
     try:
-        # Get cars rated by the user
+        # Obtenir les voitures évaluées par l'utilisateur
         user_rated_cars = ratings_df[ratings_df['user_id'] == user_id]['car_id'].unique()
         
         if len(user_rated_cars) == 0:
             return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
         
-        # Get all cars not rated by the user
+        # Obtenir les voitures non évaluées
         all_car_ids = cars_df['car_id'].unique()
         unrated_cars = np.setdiff1d(all_car_ids, user_rated_cars)
         
-        # Get predictions for user based on item similarity
+        # Générer des prédictions basées sur la similarité entre items
         predictions = []
         for car_id in unrated_cars:
             predictions.append((car_id, knn_item.predict(user_id, car_id).est))
         
-        # Sort by estimated rating
+        # Trier par évaluation estimée
         predictions.sort(key=lambda x: x[1], reverse=True)
         
-        # Get top N car IDs
+        # Obtenir les IDs des N meilleures voitures
         top_car_ids = [pred[0] for pred in predictions[:top_n]]
         
-        # Return car details
+        # Retourner les détails des voitures
         return cars_df[cars_df['car_id'].isin(top_car_ids)].to_dict('records')
     except Exception as e:
         print(f"Error in item-based recommendations: {e}")
-        # Return random cars if there's an error
+        # Retourner des voitures aléatoires en cas d'erreur
         return cars_df.sample(min(top_n, len(cars_df))).to_dict('records')
 
 # Function to get purchase-based recommendations

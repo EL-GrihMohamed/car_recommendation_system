@@ -12,51 +12,51 @@
 <body>
     <header>
         <nav>
-          <div class="nav__logo">
-            <a href="#">RENTIX</a>
-          </div>
-          <ul class="nav__links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/rent">Rent</a></li>
-            <li><a href="/services">Services</a></li>
-            <li><a href="/contact">Contact</a></li>
-          </ul>
-          <div class="nav__btn">
-            <a href="/rent" class="btn">check cart</a>
-          </div>
+            <div class="nav__logo">
+                <a href="#">RENTIX</a>
+            </div>
+            <ul class="nav__links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/rent">Rent</a></li>
+                <li><a href="/services">Services</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+            <div class="nav__btn">
+                <button class="btn">Get Started</button>
+            </div>
         </nav>
-      </header>
+    </header>
     <section class="section__container range__container" id="about">
         <h2 class="section__header">WIDE RANGE OF VEHICLES</h2>
         <div class="range__grid">
-          <div class="range__card">
-            <img src="{{ url_for('static', filename='images/range-1.jpg') }}" alt="range" />
-            <div class="range__details">
-              <h4>CARS</h4>
-              <a href="#"><i class="ri-arrow-right-line"></i></a>
+            <div class="range__card">
+                <img src="{{ url_for('static', filename='images/range-1.jpg') }}" alt="range" />
+                <div class="range__details">
+                    <h4>CARS</h4>
+                    <a href="#"><i class="ri-arrow-right-line"></i></a>
+                </div>
             </div>
-          </div>
-          <div class="range__card">
-            <img src="{{ url_for('static', filename='images/range-2.jpg') }}" alt="range" />
-            <div class="range__details">
-              <h4>SUVS</h4>
-              <a href="#"><i class="ri-arrow-right-line"></i></a>
+            <div class="range__card">
+                <img src="{{ url_for('static', filename='images/range-2.jpg') }}" alt="range" />
+                <div class="range__details">
+                    <h4>SUVS</h4>
+                    <a href="#"><i class="ri-arrow-right-line"></i></a>
+                </div>
             </div>
-          </div>
-          <div class="range__card">
-            <img src="{{ url_for('static', filename='images/range-3.jpg') }}" alt="range" />
-            <div class="range__details">
-              <h4>VANS</h4>
-              <a href="#"><i class="ri-arrow-right-line"></i></a>
+            <div class="range__card">
+                <img src="{{ url_for('static', filename='images/range-3.jpg') }}" alt="range" />
+                <div class="range__details">
+                    <h4>VANS</h4>
+                    <a href="#"><i class="ri-arrow-right-line"></i></a>
+                </div>
             </div>
-          </div>
-          <div class="range__card">
-            <img src="{{ url_for('static', filename='images/range-4.jpg') }}" alt="range" />
-            <div class="range__details">
-              <h4>ELECTRIC</h4>
-              <a href="#"><i class="ri-arrow-right-line"></i></a>
+            <div class="range__card">
+                <img src="{{ url_for('static', filename='images/range-4.jpg') }}" alt="range" />
+                <div class="range__details">
+                    <h4>ELECTRIC</h4>
+                    <a href="#"><i class="ri-arrow-right-line"></i></a>
+                </div>
             </div>
-          </div>
         </div>
     </section>
     <div class="section__container preferences-container">
@@ -65,64 +65,64 @@
             <div class="form-group">
                 <label for="user-id">User ID:</label>
                 <input type="text" id="user-id" placeholder="Enter your user ID" required>
-                <small class="form-text text-muted">Please enter your user ID to receive personalized recommendations</small>
+                <small class="form-text text-muted">Please enter your user ID to receive personalized
+                    recommendations</small>
             </div>
-            
+
             <div class="form-group">
                 <label>Car Make</label>
                 <div class="button-selection" id="car-make-selection">
                     <!-- Will be populated by JavaScript -->
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <label>Car Model</label>
                 <div class="button-selection" id="car-model-selection">
                     <!-- Will be populated by JavaScript -->
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <label>Car Type</label>
                 <div class="button-selection" id="car-type-selection">
                     <!-- Will be populated by JavaScript -->
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <label>Fuel Type</label>
                 <div class="button-selection" id="fuel-type-selection">
                     <!-- Will be populated by JavaScript -->
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <label>Transmission Type</label>
                 <div class="button-selection" id="transmission-type-selection">
                     <!-- Will be populated by JavaScript -->
                 </div>
             </div>
-            
+
             <button id="recommend-btn" class="btn btn__primary">Get Recommendations</button>
         </div>
     </div>
 
-        <div class="section__container recommendations-container">
-            <div class="loading" id="loading">
-                <div class="loader">
-                    <div class="spinner"></div>
-                </div>
-                <p>Finding the best cars for you...</p>
+    <div class="section__container recommendations-container">
+        <div class="loading" id="loading">
+            <div class="loader">
+                <div class="spinner"></div>
             </div>
-
-            <div class="tab-content active" id="hybrid-recommendations">
-                <h2>Recommendations</h2>
-                
-                <div class="cars-grid" id="hybrid-cars"></div>
-            </div>
+            <p>Finding the best cars for you...</p>
         </div>
-    </main>
 
+        <div class="tab-content active" id="hybrid-recommendations">
+            <h2>Recommendations</h2>
+
+            <div class="cars-grid" id="hybrid-cars"></div>
+        </div>
+    </div>
+    </main>
     <footer>
         <div class="section__container footer__container">
             <div class="footer__col">
@@ -134,7 +134,7 @@
                 </ul>
             </div>
             <div class="footer__col">
-                <h4>About RentalX</h4>
+                <h4>About Rentix</h4>
                 <ul class="footer__links">
                     <li><a href="#">Our Story</a></li>
                     <li><a href="#">Investors</a></li>
@@ -159,8 +159,8 @@
             </div>
         </div>
         <div class="section__container footer__bar">
-            <h4>RentalX</h4>
-            <p>Copyright © 2024 RentalX. All rights reserved.</p>
+            <h4>Rentix</h4>
+            <p>Copyright © 2024 Rentix. All rights reserved.</p>
             <ul class="footer__socials">
                 <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
                 <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
@@ -168,9 +168,7 @@
             </ul>
         </div>
     </footer>
-
     <script src="../static/script.js"></script>
     <script src="https://unpkg.com/scrollreveal"></script>
 </body>
-
 </html>
