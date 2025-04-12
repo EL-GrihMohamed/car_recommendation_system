@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 import random
+import datetime
 
 # Create data directory if it doesn't exist
 if not os.path.exists('data'):
@@ -168,34 +169,54 @@ except FileNotFoundError:
     
     ratings_df = pd.DataFrame(ratings_data)
 
-# Create purchase data if it doesn't exist
-if not os.path.exists('data/purchases.csv'):
-    # Create a purchases DataFrame with alphanumeric user IDs
-    purchases_data = []
+# Generate proper purchase data
+# Create random dates in the last 6 months
+def random_date(start_date, end_date):
+    time_between = end_date - start_date
+    days_between = time_between.days
+    random_days = random.randrange(days_between)
+    return start_date + datetime.timedelta(days=random_days)
+
+start_date = datetime.datetime(2024, 10, 1)
+end_date = datetime.datetime(2025, 4, 13)  # Today's date
+
+# Create purchase data
+purchases_data = []
+
+# Make sure each user has at least 2 purchases
+for user_id, alpha_id in alpha_user_ids.items():
+    # Number of purchases for this user (2-5)
+    num_purchases = random.randint(2, 5)
     
-    # For the 5 users with predefined IDs
-    for i in range(1, 6):
-        alpha_id = alpha_user_ids[i]
-        car_id = np.random.randint(1, len(cars_df) + 1)
+    # Create purchases for this user
+    for _ in range(num_purchases):
+        # Random car from available cars
+        car_id = random.choice(cars_df['car_id'].tolist())
+        car_row = cars_df[cars_df['car_id'] == car_id].iloc[0]
         
-        # Check if the car exists before accessing its properties
-        car_row = cars_df[cars_df['car_id'] == car_id]
-        if not car_row.empty:
-            purchases_data.append({
-                'user_id': alpha_id,
-                'car_id': car_id,
-                'car_make': car_row['car_make'].values[0],
-                'car_model': car_row['car_models'].values[0],
-                'car_type': car_row['car_type'].values[0],
-                'fuel_type': car_row['fuel_type'].values[0],
-                'transmission_type': car_row['transmission_type'].values[0],
-                'price_per_day': car_row['price_per_day'].values[0],
-                'year': car_row['year'].values[0]
-            })
-    
-    purchases_df = pd.DataFrame(purchases_data)
-    purchases_df.to_csv('data/purchases.csv', index=False)
-    print("Created purchases.csv with alphanumeric user IDs")
+        # Generate random dates and duration
+        purchase_date = random_date(start_date, end_date)
+        duration = random.randint(1, 7)  # 1-7 days rental
+        
+        # Calculate total cost
+        total_cost = car_row['price_per_day'] * duration
+        
+        # Payment methods
+        payment_method = random.choice(['Credit Card', 'PayPal', 'Debit Card', 'Cash'])
+        
+        purchases_data.append({
+            'purchase_id': len(purchases_data) + 1,
+            'user_id': alpha_id,
+            'car_id': car_id,
+            'car_make': car_row['car_make'],
+            'car_model': car_row['car_models'],
+            'purchase_date': purchase_date.strftime('%Y-%m-%d'),
+            'duration_days': duration,
+            'total_cost': total_cost,
+            'payment_method': payment_method
+        })
+
+purchases_df = pd.DataFrame(purchases_data)
 
 # Create backup of original files
 if os.path.exists('data/users_original.csv'):
@@ -212,9 +233,11 @@ else:
     except FileNotFoundError:
         print("Could not create backups, possibly files don't exist yet")
 
-# Save the new dataframes with alphanumeric IDs
+# Save the dataframes
 cars_df.to_csv('data/cars.csv', index=False)
 users_df.to_csv('data/users.csv', index=False)
 ratings_df.to_csv('data/ratings.csv', index=False)
+purchases_df.to_csv('data/purchases.csv', index=False)
 
-print("Data generation with alphanumeric IDs complete!")
+print("Data generation complete!")
+print(f"Generated {len(cars_df)} cars, {len(users_df)} users, {len(ratings_df)} ratings, and {len(purchases_df)} purchases")

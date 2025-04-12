@@ -15,14 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const car_types = ['Economy', 'Compact', 'Mid-size', 'Full-size', 'Luxury', 'Sport', 'SUV', 'Minivan'];
     const fuel_types = ['Gasoline', 'Electric', 'Hybrid', 'Diesel'];
     const transmission_types = ['Automatic', 'Manual', 'CVT'];
-    
-    // Initialize selection buttons
+
+    // Initialiser les boutons de sélection
     const initSelectionButtons = (container, options, field) => {
         const containerElement = document.getElementById(container);
         if (!containerElement) return;
-        
+
         containerElement.innerHTML = '';
-        
+
         options.forEach(option => {
             const button = document.createElement('button');
             button.type = 'button';
@@ -30,11 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = option;
             button.dataset.value = option;
             button.addEventListener('click', () => {
-                // Toggle button state
+                // Basculer l’état du bouton (actif/inactif)
                 if (button.classList.contains('active')) {
                     button.classList.remove('active');
                 } else {
-                    // Remove active class from all buttons in this container
+                    // Supprimer la classe 'active' de tous les boutons de ce conteneur
                     containerElement.querySelectorAll('.option-btn').forEach(btn => {
                         btn.classList.remove('active');
                     });
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             containerElement.appendChild(button);
         });
     };
-    
+
     // Initialize all selection buttons
     initSelectionButtons('car-make-selection', car_makes, 'car_makes');
     initSelectionButtons('car-model-selection', car_models_list, 'car_models');
@@ -67,13 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recommendBtn) {
         recommendBtn.addEventListener('click', () => {
             const userId = document.getElementById('user-id').value.trim();
-            
+
             // Check if user ID is provided
             if (!userId) {
                 alert("Please enter a user ID to get personalized recommendations");
                 return;
             }
-            
+
             // Check if the user ID is in our list of valid IDs
             if (!VALID_USER_IDS.includes(userId)) {
                 alert("Invalid user ID. Please use one of the provided user IDs (e.g., P100088, L200079, etc.)");
@@ -110,46 +110,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify(preferences),
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.error || `HTTP Error: ${response.status}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Complete API response:", data);
-                loadingIndicator.style.display = 'none';
-
-                if (data.collaborative_filtering) {
-                    console.log("Collaborative data received:", data.collaborative_filtering);
-                    console.log("Number of items:", data.collaborative_filtering.length);
-                    if (data.collaborative_filtering.length > 0) {
-                        console.log("First item:", data.collaborative_filtering[0]);
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || `HTTP Error: ${response.status}`);
+                        });
                     }
-                } else {
-                    console.warn("No collaborative data received");
-                }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Complete API response:", data);
+                    loadingIndicator.style.display = 'none';
 
-                // Display recommendations
-                const historyContainer = document.getElementById('history-cars');
-                if (historyContainer) {
-                    displayCars(data.history_based || [], 'history-cars');
-                }
-                displayCars(data.hybrid || [], 'hybrid-cars');
-                displayCars(data.content_based || [], 'content-cars');
-                displayCollaborativeRecommendations(data.collaborative_filtering || [], 'collaborative-cars');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                loadingIndicator.style.display = 'none';
-                alert(error.message || 'An error occurred when retrieving recommendations. Please try again.');
-                const errorMessage = `<p class="error-message">${error.message || 'An error occurred when retrieving recommendations. Please try again.'}</p>`;
-                document.querySelectorAll('.cars-grid').forEach(container => {
-                    container.innerHTML = errorMessage;
+                    if (data.collaborative_filtering) {
+                        console.log("Collaborative data received:", data.collaborative_filtering);
+                        console.log("Number of items:", data.collaborative_filtering.length);
+                        if (data.collaborative_filtering.length > 0) {
+                            console.log("First item:", data.collaborative_filtering[0]);
+                        }
+                    } else {
+                        console.warn("No collaborative data received");
+                    }
+
+                    // Display recommendations
+                    const historyContainer = document.getElementById('history-cars');
+                    if (historyContainer) {
+                        displayCars(data.history_based || [], 'history-cars');
+                    }
+                    displayCars(data.hybrid || [], 'hybrid-cars');
+                    displayCars(data.content_based || [], 'content-cars');
+                    displayCollaborativeRecommendations(data.collaborative_filtering || [], 'collaborative-cars');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingIndicator.style.display = 'none';
+                    alert(error.message || 'An error occurred when retrieving recommendations. Please try again.');
+                    const errorMessage = `<p class="error-message">${error.message || 'An error occurred when retrieving recommendations. Please try again.'}</p>`;
+                    document.querySelectorAll('.cars-grid').forEach(container => {
+                        container.innerHTML = errorMessage;
+                    });
                 });
-            });
         });
     }
 
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ScrollReveal().reveal(".location__content p", { ...scrollRevealOption, delay: 1000 });
         ScrollReveal().reveal(".location__content .location__btn", { ...scrollRevealOption, delay: 1500 });
         ScrollReveal().reveal(".story__card", { ...scrollRevealOption, interval: 500 });
-        
+
         // This section uses ScrollReveal for animation
         ScrollReveal().reveal(".range__card", {
             duration: 1000,

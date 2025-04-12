@@ -1,11 +1,18 @@
-car_id,car_make,car_model,car_type,fuel_type,transmission_type,price_per_day,year
-1,Toyota,Sedan,Economy,Gasoline,CVT,92,2023
-2,Honda,SUV,Compact,Gasoline,Manual,147,2018
-4,BMW,Coupe,Luxury,Electric,CVT,56,2020
-6,Audi,Wagon,Economy,Diesel,Automatic,95,2022
-8,Kia,Van,Full-size,Gasoline,Automatic,130,2020
-9,Hyundai,SUV,Hybrid,Hybrid,CVT,110,2022
-12,Honda,Coupe,Luxury,Diesel,Automatic,120,2023
-14,Nissan,SUV,Economy,Hybrid,CVT,90,2019
-18,Audi,Truck,Sport,Gasoline,Manual,175,2022
-19,Mercedes,Sedan,Luxury,Diesel,CVT,140,2020
+purchase_id,user_id,car_id,car_make,car_model,purchase_date,duration_days,total_cost,payment_method
+1,P100088,8,Kia,Van,2024-10-25,4,520,Credit Card
+2,P100088,2,Honda,SUV,2025-03-05,7,1029,Cash
+3,P100088,12,Honda,Coupe,2025-01-23,6,720,Cash
+4,P100088,1,Toyota,Sedan,2025-01-30,6,552,Debit Card
+5,L200079,9,Hyundai,SUV,2025-02-05,6,660,Debit Card
+6,L200079,8,Kia,Van,2024-11-16,3,390,Cash
+7,G300057,9,Hyundai,SUV,2024-12-03,5,550,PayPal
+8,G300057,19,Mercedes,Sedan,2025-01-10,3,420,Cash
+9,G300057,9,Hyundai,SUV,2025-02-04,4,440,Cash
+10,G300057,8,Kia,Van,2025-01-04,5,650,Cash
+11,P400044,14,Nissan,SUV,2025-03-01,3,270,Credit Card
+12,P400044,4,BMW,Coupe,2025-02-27,5,280,PayPal
+13,L500046,9,Hyundai,SUV,2024-10-24,2,220,Credit Card
+14,L500046,1,Toyota,Sedan,2024-11-04,6,552,Debit Card
+15,L500046,6,Audi,Wagon,2025-01-09,6,570,Debit Card
+16,L500046,14,Nissan,SUV,2024-10-20,5,450,Credit Card
+17,L500046,2,Honda,SUV,2025-04-01,3,441,Credit Card
